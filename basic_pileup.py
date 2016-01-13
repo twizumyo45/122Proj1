@@ -14,12 +14,14 @@ def generate_consensus(aligned_fn):
         lines_to_process = []
         SNPs = []
         output_lines = []
+        #loop through each read chunk of 100 genes
         for line in input_file:
             line_count += 1
             line = line.strip()
             if line_count <= 4 or line == '':  # The first 4 lines need to be skipped
                 output_lines.append(line)
                 continue
+            #process the current chunk
             if len(line) > 0 and all(x == '-' for x in line):  # The different pieces of the genome are set off
                                                                # with lines of all dashes '--------'
                 new_snps, new_output_lines = process_lines(lines_to_process)
@@ -100,7 +102,8 @@ def snp_calls(ref_string, consensus_string, start_index):
     snps = []
     for i in range(len(ref_string)):
         if ref_string[i] != consensus_string[i]:
-            snps.append([ref_string[i], consensus_string[i], start_index + i])
+            if (i+1 >= len(ref_string) or ref_string[i+1] == consensus_string[i+1]) and (i-1 <= 0 or ref_string[i-1] == consensus_string[i-1]) :
+                snps.append([ref_string[i], consensus_string[i], start_index + i])
     return snps
 
 
